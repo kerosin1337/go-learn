@@ -3,18 +3,13 @@ package user
 import (
 	"example/web-service-gin/database"
 	"example/web-service-gin/database/model"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
-func (u *CreateUserDto) String() string {
-	return fmt.Sprintf("Hello, I am %s", u.Name)
-}
-
 type CreateUserDto struct {
-	Name     string    `json:"name" binding:"required" example:"name"`
+	Name     string    `json:"name" binding:"required"`
 	Email    string    `json:"email" binding:"required,email"`
 	Birthday time.Time `json:"birthday" binding:"required" time_format:"2006-01-02"`
 }
