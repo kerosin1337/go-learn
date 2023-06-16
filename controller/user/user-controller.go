@@ -3,13 +3,18 @@ package user
 import (
 	"example/web-service-gin/database"
 	"example/web-service-gin/database/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
+func (u *CreateUserDto) String() string {
+	return fmt.Sprintf("Hello, I am %s", u.Name)
+}
+
 type CreateUserDto struct {
-	Name     string    `json:"name" binding:"required"`
+	Name     string    `json:"name" binding:"required" example:"name"`
 	Email    string    `json:"email" binding:"required,email"`
 	Birthday time.Time `json:"birthday" binding:"required" time_format:"2006-01-02"`
 }
@@ -21,6 +26,16 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	user := model.User{Name: input.Name, Email: input.Email, Birthday: input.Birthday}
+	if err := database.DB.Where(&model.User{Email: user.Email}).Take(&user).RowsAffected; err > 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User does exists"})
+		return
+	}
 	database.DB.Create(&user)
 	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+func FindAllUser(c *gin.Context) {
+	var users []model.User
+	database.DB.Find(&users)
+	c.JSON(http.StatusOK, gin.H{"data": users})
 }
