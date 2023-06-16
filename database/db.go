@@ -2,29 +2,13 @@ package database
 
 import (
 	"example/web-service-gin/common"
+	"example/web-service-gin/database/model"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type Product struct {
-	gorm.Model
-	Code  string
-	Price uint
-}
-type Author struct {
-	gorm.Model
-	Name  string
-	Email string
-}
-
-type Blog struct {
-	gorm.Model
-	ID      int
-	Author  Author `gorm:"embedded"`
-	Upvotes int32
-	Text    string `gorm:"type:text"`
-}
+var DB *gorm.DB
 
 func Connect() {
 	user := common.Env("PG_USER")
@@ -38,7 +22,7 @@ func Connect() {
 		panic("failed to connect database")
 	}
 	// Migrate the schema
-	db.AutoMigrate(&Product{})
-	db.AutoMigrate(&Author{})
-	db.AutoMigrate(&Blog{})
+	db.AutoMigrate(&model.User{})
+
+	DB = db
 }

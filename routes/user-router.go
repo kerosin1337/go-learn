@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"example/web-service-gin/controller/user"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -15,5 +16,7 @@ func UserRouter(router *gin.Engine) {
 				"nick":    "123",
 			})
 		})
+
+		userRouter.POST("", user.CreateUser)
 	}
 }
