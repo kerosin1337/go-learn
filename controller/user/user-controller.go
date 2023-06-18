@@ -3,6 +3,7 @@ package user
 import (
 	"example/web-service-gin/database"
 	"example/web-service-gin/database/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -16,9 +17,14 @@ type CreateUserDto struct {
 }
 
 type FindAllUserDto struct {
-	Name     string `form:"name" binding:"required"`
+	Name     string `form:"name" binding:"omitempty"`
 	Email    string `form:"email" binding:"omitempty,email"`
 	Birthday string `form:"birthday" binding:"omitempty" time_format:"2006-01-02"`
+}
+
+type SignInDto struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
 }
 
 func CreateUser(c *gin.Context) {
@@ -53,4 +59,15 @@ func FindAllUser(c *gin.Context) {
 	}
 	query.Find(&users)
 	c.JSON(http.StatusOK, gin.H{"data": users})
+}
+
+func SignIn(c *gin.Context) {
+	var input = c.MustGet("body").(SignInDto)
+	var user model.User
+	fmt.Print(user.ComparePassword(input.Password))
+	if database.DB.Where(model.User{Email: input.Email}).Take(&user).RowsAffected == 0 || user.ComparePassword(input.Password) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect Email or Password"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": user})
 }
