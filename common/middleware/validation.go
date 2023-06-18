@@ -12,12 +12,15 @@ import (
 func ValidationMiddleWare[T any](c *gin.Context) {
 	var input T
 	var err error
+	var typeTag string
 	switch c.Request.Method {
 	case "GET":
 		err = c.ShouldBindQuery(&input)
+		typeTag = "form"
 		break
 	case "POST", "PATCH":
 		err = c.ShouldBindJSON(&input)
+		typeTag = "json"
 		break
 	}
 	if err != nil {
@@ -28,10 +31,9 @@ func ValidationMiddleWare[T any](c *gin.Context) {
 			// Loop through validation errors
 			for _, e := range errs {
 				fieldName := e.Field()
-
 				// Get the corresponding JSON field name
 				if field, ok := reflect.TypeOf(input).FieldByName(fieldName); ok {
-					jsonTag := field.Tag.Get("json")
+					jsonTag := field.Tag.Get(typeTag)
 					jsonFieldName := strings.Split(jsonTag, ",")[0]
 
 					// Add the error message to the map
