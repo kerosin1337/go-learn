@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"example/web-service-gin/common/middleware"
-	userController "example/web-service-gin/controller/user"
+	"example/web-service-gin/src/common/middleware"
+	userController "example/web-service-gin/src/controller/user"
 	"github.com/gin-gonic/gin"
 )
 

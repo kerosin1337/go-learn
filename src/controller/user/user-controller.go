@@ -1,9 +1,9 @@
 package user
 
 import (
-	"example/web-service-gin/common/jwt"
-	"example/web-service-gin/database"
-	"example/web-service-gin/database/model"
+	"example/web-service-gin/src/common/jwt"
+	"example/web-service-gin/src/database"
+	"example/web-service-gin/src/database/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"

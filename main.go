@@ -1,9 +1,8 @@
 package main
 
 import (
-	"example/web-service-gin/database"
-	_ "example/web-service-gin/docs"
-	"example/web-service-gin/routes"
+	"example/web-service-gin/src/database"
+	"example/web-service-gin/src/routes"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -33,7 +32,6 @@ func main() {
 	database.Connect()
 	routes.UserRouter(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	router.GET("/users/:id", getUserByID)
 	router.Run("localhost:8080")
 }

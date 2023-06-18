@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "tmp\\main.exe"
-  cmd = "swag init & go build -o ./tmp/main.exe ."
+  cmd = "go build -o ./tmp/main.exe . & swag init"
   delay = 0
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "docs"]
   exclude_file = []

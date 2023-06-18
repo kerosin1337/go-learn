@@ -1,8 +1,8 @@
 package database
 
 import (
-	"example/web-service-gin/common"
-	"example/web-service-gin/database/model"
+	"example/web-service-gin/src/common"
+	"example/web-service-gin/src/database/model"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

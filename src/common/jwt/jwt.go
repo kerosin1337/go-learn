@@ -1,7 +1,7 @@
 package jwt
 
 import (
-	"example/web-service-gin/common"
+	"example/web-service-gin/src/common"
 	"github.com/dgrijalva/jwt-go"
 	"strconv"
 	"time"
