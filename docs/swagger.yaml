@@ -1,0 +1,35 @@
+definitions:
+  main.User:
+    properties:
+      id:
+        description: ID this is userid
+        type: integer
+      name:
+        example: asd
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.User'
+      summary: Get user by ID
+      tags:
+      - Users
+swagger: "2.0"

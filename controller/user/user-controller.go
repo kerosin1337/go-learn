@@ -1,6 +1,7 @@
 package user
 
 import (
+	"example/web-service-gin/common/jwt"
 	"example/web-service-gin/database"
 	"example/web-service-gin/database/model"
 	"fmt"
@@ -69,5 +70,5 @@ func SignIn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect Email or Password"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	c.JSON(http.StatusOK, gin.H{"data": user, "token": jwt.GenerateToken(user.ID)})
 }
