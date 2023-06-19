@@ -1,37 +1,31 @@
 package main
 
 import (
+	_ "example/web-service-gin/docs"
+	"example/web-service-gin/src/common/validate"
 	"example/web-service-gin/src/database"
 	"example/web-service-gin/src/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "net/http"
 )
 
-// @Summary Get user by ID
-// @Description Get a user by their ID
-// @Tags Users
-// @Accept json
-// @Produce json
-// @Param id path int true "User ID"
-// @Success 200 {object} User
-// @Router /users/{id} [get]
-func getUserByID(c *gin.Context) {
-	// Handle get user by ID
-}
-
-type User struct {
-	// ID this is userid
-	ID   int    `json:"id"`
-	Name string `json:"name" example:"asd"`
-}
-
+// @title Your Gin API
+// @version 0.2
+// @description	This is a sample Gin API with Swagger documentation
+// @host localhost:12300
+// @BasePath /
 func main() {
 	router := gin.Default()
 	database.Connect()
 	routes.UserRouter(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.GET("/users/:id", getUserByID)
-	router.Run("localhost:8080")
+	// TODO: Custom Validator
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("unique", validate.UniqueValidate)
+	}
+	router.Run("localhost:12300")
 }

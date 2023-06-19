@@ -4,32 +4,24 @@ import (
 	"example/web-service-gin/src/common/jwt"
 	"example/web-service-gin/src/database"
 	"example/web-service-gin/src/database/model"
+	userRequestDto "example/web-service-gin/src/module/user/dto/req"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
-type CreateUserDto struct {
-	Name     interface{} `json:"name" binding:"required,alphanum"`
-	Email    string      `json:"email" binding:"required,email"`
-	Birthday time.Time   `json:"birthday" binding:"required" time_format:"2006-01-02"`
-	Password string      `json:"password" binding:"required"`
-}
-
-type FindAllUserDto struct {
-	Name     string `form:"name" binding:"omitempty"`
-	Email    string `form:"email" binding:"omitempty,email"`
-	Birthday string `form:"birthday" binding:"omitempty" time_format:"2006-01-02"`
-}
-
-type SignInDto struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
+// CreateUser godoc
+// @Summary Create a new user
+// @Description	Create a new user with the provided data
+// @Tags Users
+// @Accept json
+// @Produce	 json
+// @Param user body	userRequestDto.CreateUserDto true "User object"
+// @Success	201	{object} userResponseDto.UserResponse
+// @Failure 422 {object} response.ValidationErrorResponse
+// @Router /users [post]
 func CreateUser(c *gin.Context) {
-	var input = c.MustGet("body").(CreateUserDto)
+	var input = c.MustGet("body").(userRequestDto.CreateUserDto)
 	user := model.User{Name: input.Name.(string), Email: input.Email, Birthday: input.Birthday}
 	hashPassword, err := user.HashPassword(input.Password)
 	if err != nil {
@@ -37,16 +29,12 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	user.Password = string(hashPassword)
-	if err := database.DB.Where(model.User{Email: user.Email}).Take(&user).RowsAffected; err > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User does exists"})
-		return
-	}
 	database.DB.Create(&user)
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	c.JSON(http.StatusCreated, gin.H{"data": user})
 }
 
 func FindAllUser(c *gin.Context) {
-	var input = c.MustGet("body").(FindAllUserDto)
+	var input = c.MustGet("body").(userRequestDto.FindAllUserDto)
 	var users []model.User
 	var query = database.DB.Model(&model.User{})
 	if input.Name != "" {
@@ -63,7 +51,7 @@ func FindAllUser(c *gin.Context) {
 }
 
 func SignIn(c *gin.Context) {
-	var input = c.MustGet("body").(SignInDto)
+	var input = c.MustGet("body").(userRequestDto.SignInDto)
 	var user model.User
 	fmt.Print(user.ComparePassword(input.Password))
 	if database.DB.Where(model.User{Email: input.Email}).Take(&user).RowsAffected == 0 || user.ComparePassword(input.Password) != nil {
@@ -71,4 +59,14 @@ func SignIn(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": user, "token": jwt.GenerateToken(user.ID)})
+}
+
+func FindOneUser(c *gin.Context) {
+	id := c.Param("id")
+	var user model.User
+	if database.DB.Take(&user, id).RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": user})
 }

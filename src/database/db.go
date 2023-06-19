@@ -23,6 +23,5 @@ func Connect() {
 	}
 	// Migrate the schema
 	db.AutoMigrate(&model.User{})
-
 	DB = db
 }

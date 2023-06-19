@@ -1,35 +1,93 @@
+basePath: /
 definitions:
-  main.User:
+  response.ValidationErrorResponse:
     properties:
-      id:
-        description: ID this is userid
-        type: integer
-      name:
-        example: asd
-        type: string
+      error:
+        properties:
+          password:
+            example: Field 'password' validation failed on the rule 'required'
+            type: string
+        type: object
     type: object
+  userRequestDto.CreateUserDto:
+    properties:
+      birthday:
+        example: "2015-09-15T14:00:12-00:00"
+        type: string
+      email:
+        example: test@test.ru
+        type: string
+      name: {}
+      password:
+        type: string
+    required:
+    - birthday
+    - email
+    - name
+    - password
+    type: object
+  userResponseDto.UserResponse:
+    properties:
+      CreatedAt:
+        example: "2023-06-19T12:23:08.904269+07:00"
+        type: string
+      DeletedAt:
+        example: "null"
+        type: string
+      ID:
+        example: 36
+        type: integer
+      UpdatedAt:
+        example: "2023-06-19T12:23:08.904269+07:00"
+        type: string
+      birthday:
+        example: "2015-09-15T14:00:12Z"
+        type: string
+      email:
+        example: test@test.ru
+        type: string
+      name:
+        example: test
+        type: string
+    required:
+    - CreatedAt
+    - ID
+    - UpdatedAt
+    - birthday
+    - email
+    - name
+    type: object
+host: localhost:12300
 info:
   contact: {}
+  description: This is a sample Gin API with Swagger documentation
+  title: Your Gin API
+  version: "0.2"
 paths:
-  /users/{id}:
-    get:
+  /users:
+    post:
       consumes:
       - application/json
-      description: Get a user by their ID
+      description: Create a new user with the provided data
       parameters:
-      - description: User ID
-        in: path
-        name: id
+      - description: User object
+        in: body
+        name: user
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/userRequestDto.CreateUserDto'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/main.User'
-      summary: Get user by ID
+            $ref: '#/definitions/userResponseDto.UserResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ValidationErrorResponse'
+      summary: Create a new user
       tags:
       - Users
 swagger: "2.0"

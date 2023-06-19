@@ -16,9 +16,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users/{id}": {
-            "get": {
-                "description": "Get a user by their ID",
+        "/users": {
+            "post": {
+                "description": "Create a new user with the provided data",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,21 +28,29 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get user by ID",
+                "summary": "Create a new user",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userRequestDto.CreateUserDto"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/userResponseDto.UserResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.ValidationErrorResponse"
                         }
                     }
                 }
@@ -50,16 +58,81 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.User": {
+        "response.ValidationErrorResponse": {
             "type": "object",
             "properties": {
-                "id": {
-                    "description": "ID this is userid",
-                    "type": "integer"
+                "error": {
+                    "type": "object",
+                    "properties": {
+                        "password": {
+                            "type": "string",
+                            "example": "Field 'password' validation failed on the rule 'required'"
+                        }
+                    }
+                }
+            }
+        },
+        "userRequestDto.CreateUserDto": {
+            "type": "object",
+            "required": [
+                "birthday",
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "birthday": {
+                    "type": "string",
+                    "example": "2015-09-15T14:00:12-00:00"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "test@test.ru"
+                },
+                "name": {},
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "userResponseDto.UserResponse": {
+            "type": "object",
+            "required": [
+                "CreatedAt",
+                "ID",
+                "UpdatedAt",
+                "birthday",
+                "email",
+                "name"
+            ],
+            "properties": {
+                "CreatedAt": {
+                    "type": "string",
+                    "example": "2023-06-19T12:23:08.904269+07:00"
+                },
+                "DeletedAt": {
+                    "type": "string",
+                    "example": "null"
+                },
+                "ID": {
+                    "type": "integer",
+                    "example": 36
+                },
+                "UpdatedAt": {
+                    "type": "string",
+                    "example": "2023-06-19T12:23:08.904269+07:00"
+                },
+                "birthday": {
+                    "type": "string",
+                    "example": "2015-09-15T14:00:12Z"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "test@test.ru"
                 },
                 "name": {
                     "type": "string",
-                    "example": "asd"
+                    "example": "test"
                 }
             }
         }
@@ -68,12 +141,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "0.2",
+	Host:             "localhost:12300",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Your Gin API",
+	Description:      "This is a sample Gin API with Swagger documentation",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

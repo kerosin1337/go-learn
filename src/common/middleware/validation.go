@@ -41,14 +41,14 @@ func ValidationMiddleWare[T any](c *gin.Context) {
 				}
 			}
 
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
 				"error": validationErrors,
 			})
 			c.Abort()
 			return
 		}
 
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error": err.Error(),
 		})
 		c.Abort()
