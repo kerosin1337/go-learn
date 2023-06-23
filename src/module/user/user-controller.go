@@ -5,7 +5,6 @@ import (
 	"example/web-service-gin/src/database"
 	"example/web-service-gin/src/database/model"
 	userRequestDto "example/web-service-gin/src/module/user/dto/req"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -53,7 +52,6 @@ func FindAllUser(c *gin.Context) {
 func SignIn(c *gin.Context) {
 	var input = c.MustGet("body").(userRequestDto.SignInDto)
 	var user model.User
-	fmt.Print(user.ComparePassword(input.Password))
 	if database.DB.Where(model.User{Email: input.Email}).Take(&user).RowsAffected == 0 || user.ComparePassword(input.Password) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect Email or Password"})
 		return

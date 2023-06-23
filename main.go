@@ -26,6 +26,7 @@ func main() {
 	// TODO: Custom Validator
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("unique", validate.UniqueValidate)
+		v.RegisterValidation("date", validate.DateValidate)
 	}
 	router.Run("localhost:12300")
 }

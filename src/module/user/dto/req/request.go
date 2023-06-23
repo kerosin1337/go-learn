@@ -1,19 +1,15 @@
 package userRequestDto
 
-import (
-	"time"
-)
-
 type CreateUserDto struct {
-	Name     interface{} `json:"name" binding:"required,alphanum"`
+	Name     interface{} `json:"name" binding:"required"`
 	Email    string      `json:"email" binding:"required,email,unique=users;email" example:"test@test.ru"`
-	Birthday time.Time   `json:"birthday" binding:"required" time_format:"2006-01-02" example:"2015-09-15T14:00:12-00:00"`
+	Birthday string      `json:"birthday" binding:"required,date" example:"2015-09-15T14:00:12-00:00"`
 	Password string      `json:"password" binding:"required"`
 }
 
 type FindAllUserDto struct {
 	Name     string `form:"name" binding:"omitempty"`
-	Email    string `form:"email" binding:"omitempty,email"`
+	Email    string `form:"email" binding:"omitempty"`
 	Birthday string `form:"birthday" binding:"omitempty" time_format:"2006-01-02"`
 }
 
